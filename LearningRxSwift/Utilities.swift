@@ -51,7 +51,31 @@ class Utilities {
         }
     }
     
-    private static func myInterval(interval: NSTimeInterval) -> Observable<Int> {
-        
+    static func myInterval(interval: NSTimeInterval) -> Observable<Int> {
+        return Observable.create { observer in
+            print("Subscribed")
+            
+            let queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)
+            let timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, queue)
+            
+            var next = 0
+            
+            dispatch_source_set_timer(timer, 0, UInt64(interval * Double(NSEC_PER_SEC)), 0)
+            let cancel = AnonymousDisposable {
+                print("Disposed")
+                dispatch_source_cancel(timer)
+            }
+            dispatch_source_set_event_handler(timer, {
+                if cancel.disposed {
+                    return
+                }
+                observer.on(.Next(next))
+                next += 1
+            })
+            
+            dispatch_resume(timer)
+            
+            return cancel
+        }
     }
 }

@@ -14,7 +14,18 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-
+        let counter = Utilities.myInterval(0.001)
+        
+        print("Started -----")
+        
+        let subscription = counter.subscribeNext { n in
+            print(n)
+        }
+        
+        NSThread.sleepForTimeInterval(0.5)
+        subscription.dispose()
+        
+        print("Ended -----")
     }
 }
 
