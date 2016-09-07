@@ -7,19 +7,25 @@
 //
 
 import UIKit
+import RxSwift
 
 class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        
+        let counter = Utilities.myInterval(0.001)
+        
+        print("Started -----")
+        
+        let subscription = counter.subscribeNext { n in
+            print(n)
+        }
+        
+        NSThread.sleepForTimeInterval(0.5)
+        subscription.dispose()
+        
+        print("Ended -----")
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-
-
 }
 
